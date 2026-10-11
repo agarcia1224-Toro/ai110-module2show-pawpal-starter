@@ -26,6 +26,7 @@
 
 - Describe one tradeoff your scheduler makes.
 - Why is that tradeoff reasonable for this scenario?
+    Conflict detection checks exact `HH:MM` matches and reports warnings. It does not estimate task durations or detect overlapping time ranges, which keeps the first version simple and predictable; duration-based overlap checks would be a useful next improvement.
 
 ---
 

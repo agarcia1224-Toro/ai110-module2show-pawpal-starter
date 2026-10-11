@@ -76,10 +76,10 @@ Sample test output:
 
 | Feature | Method(s) | Notes |
 |---------|-----------|-------|
-| Task sorting | | e.g., by priority, duration |
-| Filtering | | e.g., skip tasks if time runs out |
-| Conflict handling | | e.g., overlapping time slots |
-| Recurring tasks | | e.g., daily vs. weekly |
+| Task sorting | `Scheduler.sort_by_time()` | Sorts tasks chronologically by `HH:MM`, then by pet name and task description. |
+| Filtering | `Scheduler.filter_tasks()` | Filters by pet name (case-insensitive), completion status, and due date. |
+| Conflict handling | `Scheduler.detect_conflicts()` | Returns warnings for exact time matches across any pets; it does not calculate duration overlaps. |
+| Recurring tasks | `Scheduler.mark_task_complete()` | Completing a daily or weekly task creates the next occurrence one or seven days after completion. |
 
 ## 📸 Demo Walkthrough
 
@@ -95,11 +95,21 @@ Describe your app in numbered steps so a reader can follow along without watchin
 
 ## Sample Output
 
-Run `python main.py` to see a schedule built from tasks belonging to two pets:
+Run `python main.py` to see sorting, filtering, recurrence, and conflict detection:
 
 ```text
 Today's Schedule for Jordan:
+  07:30 | Mochi: Breakfast (daily)
+  08:00 | Luna: Medication (weekly)
   08:00 | Mochi: Morning walk (daily)
-  08:30 | Mochi: Breakfast (daily)
-  09:00 | Luna: Medication (daily)
+  18:00 | Luna: Refresh water (as needed)
+
+Conflict warnings:
+Warning: conflict at 08:00: Luna - Medication; Mochi - Morning walk.
+
+Luna's tasks:
+  08:00 | Luna: Medication
+  18:00 | Luna: Refresh water
+
+Recurring task: Breakfast is next due 2026-10-12 at 07:30.
 ```

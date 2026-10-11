@@ -4,6 +4,7 @@ classDiagram
         +str time
         +str frequency
         +bool completed
+        +date due_date
         +mark_complete()
         +mark_incomplete()
     }
@@ -27,7 +28,11 @@ classDiagram
 
     class Scheduler {
         +get_tasks(owner, include_completed)
+        +filter_tasks(owner, pet_name, completed, as_of)
+        +sort_by_time(tasks)
         +get_schedule(owner, include_completed)
+        +mark_task_complete(pet, task, completed_on)
+        +detect_conflicts(tasks)
         +format_schedule(owner)
         -_time_sort_key(value)
     }
