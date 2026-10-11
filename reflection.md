@@ -6,11 +6,12 @@
 
 - Briefly describe your initial UML design.
 - What classes did you include, and what responsibilities did you assign to each?
-
+    The design has four classes: `Task` represents an activity, its scheduled time and frequency, and completion status; `Pet` stores pet details and its tasks; `Owner` manages multiple pets and provides access to their tasks; and `Scheduler` retrieves, filters, sorts, and formats tasks across the owner's pets. The core user actions are to manage pets, add and manage care tasks, and review an organized daily schedule.
 **b. Design changes**
 
 - Did your design change during implementation?
 - If yes, describe at least one change and why you made it.
+    The initial system design has now been implemented. The scheduler retrieves tasks through `Owner.get_all_tasks()` and keeps the pet alongside each task, so schedule output can identify which pet needs care. Tasks also track completion, allowing completed items to be omitted from today's schedule.
 
 ---
 
@@ -69,3 +70,4 @@
 **c. Key takeaway**
 
 - What is one important thing you learned about designing systems or working with AI on this project?
+

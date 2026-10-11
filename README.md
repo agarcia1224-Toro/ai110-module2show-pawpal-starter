@@ -92,3 +92,14 @@ Describe your app in numbered steps so a reader can follow along without watchin
 5. <!-- Add more steps as needed -->
 
 **Screenshot or video** *(optional)*: <!-- Insert a screenshot or link to a demo video here -->
+
+## Sample Output
+
+Run `python main.py` to see a schedule built from tasks belonging to two pets:
+
+```text
+Today's Schedule for Jordan:
+  08:00 | Mochi: Morning walk (daily)
+  08:30 | Mochi: Breakfast (daily)
+  09:00 | Luna: Medication (daily)
+```
