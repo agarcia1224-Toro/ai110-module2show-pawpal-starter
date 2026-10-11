@@ -101,7 +101,6 @@ class Scheduler:
         )
 
     def get_schedule(self, owner: Owner, include_completed: bool = False) -> list[tuple[Pet, Task]]:
-        """Sort tasks by their scheduled time, then pet and description."""
         """Return due tasks in time order, optionally including completed tasks."""
         return self.sort_by_time(self.get_tasks(owner, include_completed))
 

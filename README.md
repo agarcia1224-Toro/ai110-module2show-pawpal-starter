@@ -57,18 +57,26 @@ Paste a sample of your app's CLI or Streamlit output here so a reader can see wh
 ## 🧪 Testing PawPal+
 
 ```bash
-# Run the full test suite:
-pytest
-
-# Run with coverage:
-pytest --cov
+python -m pytest
 ```
 
-Sample test output:
+The suite checks task completion and addition; chronological sorting, including ties; filtering by pet, completion status, and due date; daily and weekly recurrence; non-recurring and repeated completion; exact-time conflicts for the same or different pets; and empty schedules.
+
+Successful run:
 
 ```
-# Paste your pytest output here
+============================= test session starts =============================
+platform win32 -- Python 3.13.15, pytest-9.1.1, pluggy-1.6.0
+rootdir: C:\Users\creep\ITC395-Projects\ai110-module2show-pawpal-starter
+plugins: anyio-4.15.1, platformdirs-4.12.2
+collected 11 items
+
+tests\test_pawpal.py ...........                                         [100%]
+
+============================= 11 passed in 0.09s ==============================
 ```
+
+**Confidence level:** ★★★★☆ (4/5). The core scheduling paths and key edge cases pass. Conflict checks only detect exact time matches; duration overlaps are not tested or handled yet.
 
 ## 📐 Smarter Scheduling
 

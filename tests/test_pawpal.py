@@ -81,3 +81,76 @@ def test_conflict_detection_warns_for_exact_time_matches() -> None:
     assert "08:00" in warnings[0]
     assert "Mochi" in warnings[0]
     assert "Walk" in warnings[0]
+
+
+def test_empty_owner_has_no_schedule_or_conflicts() -> None:
+    """An owner without pets gets an empty schedule and no conflict warnings."""
+    owner = Owner("Jordan")
+    scheduler = Scheduler()
+
+    assert scheduler.get_schedule(owner) == []
+    assert scheduler.format_schedule(owner) == "Today's Schedule for Jordan:\n  No tasks scheduled."
+    assert scheduler.detect_conflicts([]) == []
+
+
+def test_same_time_tasks_sort_deterministically() -> None:
+    """Tasks at the same time sort by pet name and then task description."""
+    luna = Pet("Luna", "cat")
+    mochi = Pet("Mochi", "dog")
+    tasks = [
+        (mochi, Task("Walk", "08:00")),
+        (luna, Task("Medication", "08:00")),
+        (luna, Task("Breakfast", "08:00")),
+    ]
+
+    schedule = Scheduler().sort_by_time(tasks)
+
+    assert [(pet.name, task.description) for pet, task in schedule] == [
+        ("Luna", "Breakfast"),
+        ("Luna", "Medication"),
+        ("Mochi", "Walk"),
+    ]
+
+
+def test_future_tasks_are_not_in_current_schedule() -> None:
+    """A task due after the requested date is excluded until it becomes due."""
+    today = date(2026, 10, 11)
+    owner = Owner("Jordan")
+    pet = Pet("Mochi", "dog")
+    future_task = Task("Walk", "08:00", due_date=today.replace(day=12))
+    pet.add_task(future_task)
+    owner.add_pet(pet)
+
+    scheduler = Scheduler()
+
+    assert scheduler.filter_tasks(owner, as_of=today) == []
+    assert scheduler.filter_tasks(owner, as_of=today.replace(day=12)) == [(pet, future_task)]
+
+
+def test_non_recurring_task_does_not_repeat_or_complete_twice() -> None:
+    """As-needed tasks do not recur, and completing an item twice is harmless."""
+    pet = Pet("Mochi", "dog")
+    task = Task("Brush coat", "18:00", "as needed")
+    pet.add_task(task)
+    scheduler = Scheduler()
+
+    assert scheduler.mark_task_complete(pet, task) is None
+    assert scheduler.mark_task_complete(pet, task) is None
+    assert task.completed is True
+    assert len(pet.tasks) == 1
+
+
+def test_conflicts_are_detected_for_two_tasks_on_the_same_pet() -> None:
+    """Two activities for one pet at the same time also produce a warning."""
+    pet = Pet("Mochi", "dog")
+    tasks = [
+        (pet, Task("Walk", "08:00")),
+        (pet, Task("Medication", "08:00")),
+    ]
+
+    warnings = Scheduler().detect_conflicts(tasks)
+
+    assert len(warnings) == 1
+    assert "08:00" in warnings[0]
+    assert "Walk" in warnings[0]
+    assert "Medication" in warnings[0]
