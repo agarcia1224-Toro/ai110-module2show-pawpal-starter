@@ -4,14 +4,11 @@
 
 **a. Initial design**
 
-- Briefly describe your initial UML design.
-- What classes did you include, and what responsibilities did you assign to each?
-    The design has four classes: `Task` represents an activity, its scheduled time and frequency, and completion status; `Pet` stores pet details and its tasks; `Owner` manages multiple pets and provides access to their tasks; and `Scheduler` retrieves, filters, sorts, and formats tasks across the owner's pets. The core user actions are to manage pets, add and manage care tasks, and review an organized daily schedule.
+The system has four classes. `Owner` stores the owner's name and pets. `Pet` stores each pet's details and care tasks. `Task` records a description, scheduled time, frequency, completion state, and due date. `Scheduler` retrieves tasks from the owner, filters and sorts them, reports exact-time conflicts, and creates the next occurrence of recurring tasks.
+
 **b. Design changes**
 
-- Did your design change during implementation?
-- If yes, describe at least one change and why you made it.
-    The initial system design has now been implemented. The scheduler retrieves tasks through `Owner.get_all_tasks()` and keeps the pet alongside each task, so schedule output can identify which pet needs care. Tasks also track completion, allowing completed items to be omitted from today's schedule.
+The first design focused on the owner-pet-task relationships. During implementation, tasks gained a due date so future recurring instances could be kept out of today's schedule. Recurrence is handled by `Scheduler.mark_task_complete(pet, task)`, which can both mark the task complete and add its next instance to the pet.
 
 ---
 
@@ -19,14 +16,11 @@
 
 **a. Constraints and priorities**
 
-- What constraints does your scheduler consider (for example: time, priority, preferences)?
-- How did you decide which constraints mattered most?
+The scheduler includes tasks due on or before today, filters out completed tasks by default, can filter by pet name, and sorts by scheduled `HH:MM` time. Daily and weekly tasks recur after completion. Priority, task duration, owner availability, and preferences are not part of the current scheduling algorithm.
 
 **b. Tradeoffs**
 
-- Describe one tradeoff your scheduler makes.
-- Why is that tradeoff reasonable for this scenario?
-    Conflict detection checks exact `HH:MM` matches and reports warnings. It does not estimate task durations or detect overlapping time ranges, which keeps the first version simple and predictable; duration-based overlap checks would be a useful next improvement.
+Conflict detection checks whether two tasks have the exact same scheduled time and returns a warning. It does not use task duration to find overlapping ranges. Exact matches are easy to explain and let the app flag obvious collisions, while duration-aware overlap detection is a useful next step.
 
 ---
 
@@ -34,13 +28,13 @@
 
 **a. How you used AI**
 
-- How did you use AI tools during this project (for example: design brainstorming, debugging, refactoring)?
-- What kinds of prompts or questions were most helpful?
+I used the coding assistant to help design the classes, implement the scheduler and Streamlit connection, expand the tests, and draft the documentation. Specific questions about how the scheduler should retrieve owner tasks, how recurring dates should be calculated, and which edge cases to test were most useful because they led to concrete changes that could be checked.
+
+The work was organized into phases, but I kept it in one ongoing chat rather than opening separate chat sessions. Keeping the requests phase-focused made the steps easier to follow; separate chats could also help keep planning, implementation, and testing context independent.
 
 **b. Judgment and verification**
 
-- Describe one moment where you did not accept an AI suggestion as-is.
-- How did you evaluate or verify what the AI suggested?
+I modified the option of letting `Task.mark_complete()` also create a recurring instance. A task alone cannot add its next instance to the right pet; I put that behavior in `Scheduler.mark_task_complete(pet, task)`, which has access to both objects and can update the pet's task list. I checked this behavior with tests for daily and weekly dates, non-recurring tasks, and repeated completion.
 
 ---
 
@@ -48,13 +42,11 @@
 
 **a. What you tested**
 
-- What behaviors did you test?
-- Why were these tests important?
+The 12 tests cover task completion and addition; chronological sorting and deterministic ties; filtering by pet, completion state, and due date; daily and weekly recurrence; non-recurring and repeated completion; conflicts on the same and different pets; an owner with no tasks; and a Streamlit flow that verifies a submitted task is saved to its pet and appears in the schedule. These cases verify both ordinary use and boundary behavior such as an empty schedule or a future task.
 
 **b. Confidence**
 
-- How confident are you that your scheduler works correctly?
-- What edge cases would you test next if you had more time?
+My confidence is **4/5** based on the passing tests and demo. I would next test malformed time values, daylight-saving or timezone expectations, and conflicts between tasks whose durations overlap without sharing an exact start time. The current model does not store duration or persist data after the Streamlit session ends.
 
 ---
 
@@ -62,13 +54,12 @@
 
 **a. What went well**
 
-- What part of this project are you most satisfied with?
+The same scheduler methods power both the terminal demo and the Streamlit app. That made it possible to check sorting, filtering, recurrence, and conflict warnings from two interfaces without duplicating the scheduling rules.
 
 **b. What you would improve**
 
-- If you had another iteration, what would you improve or redesign?
+I would add task duration and use it to detect overlapping time ranges. I would also add ways to edit or remove tasks and persist owner data beyond a single Streamlit session.
 
 **c. Key takeaway**
 
-- What is one important thing you learned about designing systems or working with AI on this project?
-
+Being the lead architect meant deciding what the system should do, reviewing whether the generated design matched the actual code, and checking the result with tests. AI helped produce options and implementation quickly, but I still had to choose clear boundaries between classes, document the tradeoffs, and verify behavior before treating the work as complete.
